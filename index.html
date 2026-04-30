@@ -61,6 +61,14 @@ canvas.weaponArt{display:block;width:116px;height:78px;background:linear-gradien
 .bossCard{padding:10px;min-height:210px;background:linear-gradient(180deg,#11192d,#080a12);overflow:hidden}
 canvas.bossArt,canvas.fusionArt{display:block;width:100%;height:112px;border:1px solid rgba(255,255,255,.16);border-radius:7px;background:#070814;box-shadow:inset 0 0 0 2px rgba(255,255,255,.035),0 10px 24px rgba(0,0,0,.25);margin-bottom:9px}
 canvas.fusionArt{height:76px}
+.fusionPanel .shopGrid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;min-height:0;overflow-y:auto;padding:4px 8px 30px;margin:12px -8px 16px}
+.fusionPanel .card{min-height:238px;cursor:pointer;background:linear-gradient(180deg,#111a31,#070a13);overflow:hidden}
+.fusionPanel .card:hover{border-color:#75e6ff}
+.fusionPanel .name{text-align:left;font-size:15px;min-height:36px}
+.fusionPair{margin:7px 0 8px;padding:6px 8px;border:1px solid rgba(117,230,255,.28);border-radius:6px;background:#071221;color:#d9fbff;font-size:10px;font-weight:900;line-height:1.25;text-align:left}
+.fusionDesc{padding:8px 9px;border:1px solid rgba(255,255,255,.13);border-radius:7px;background:#050814;color:#eaf0ff;font-size:11px;line-height:1.36;text-align:left;box-shadow:inset 0 0 18px rgba(117,230,255,.04)}
+.fusionDesc b{color:#ffd34d}
+.fusionTag{display:inline-block;margin-top:7px;padding:4px 7px;border:1px solid rgba(255,211,77,.45);border-radius:999px;background:#2a2109;color:#ffd34d;font-size:9px;font-weight:900;text-transform:uppercase}
 .bossZone{margin:7px auto 0;width:max-content;max-width:100%;padding:3px 7px;border:1px solid rgba(117,230,255,.35);border-radius:999px;background:#071221;color:#75e6ff;font-size:9px;font-weight:900;text-align:center;text-transform:uppercase}
 .card{border:2px solid rgba(255,255,255,.14);border-radius:8px;background:#101426;padding:12px;min-height:118px;cursor:pointer;transition:transform .12s,border-color .12s,background .12s}
 .card:hover{transform:translateY(-2px);border-color:#ffb52b}
@@ -155,23 +163,23 @@ const FUSION_CLUES=[
  ["eloiseheadphones+irelandisland","island amp","Ireland's trap plus Eloise's headphones makes chain lightning islands."]
 ];
 const FUSION_SPECIALS={
- "potion+sword":{name:"Marque Johnson's Forbidden Stick",color:"#ffd34d",tag:"SECRET OP"},
- "dabtech+leoyu":{name:"Iron Soccer Suit",color:"#75e6ff",tag:"MISSILE CROSS"},
- "chatgpt+plague":{name:"Homework Outbreak",color:"#62ff5b",tag:"PLAGUE DROP"},
- "boulder+dariusjet":{name:"Meteor Runway",color:"#d7f3ff",tag:"JET CRATER"},
- "brandonmuscles+nicholaswrestle":{name:"Suplex Pump",color:"#ff4d6d",tag:"GRAB SHOCK"},
- "gioguitar+motyrap":{name:"Concert Wave",color:"#b45cff",tag:"SOUNDSTORM"},
- "rydergolf+seamusmoose":{name:"Varsity Cannon",color:"#8edcff",tag:"PRECISION"},
- "justinquads+wyatt":{name:"Monster Sprint",color:"#4dff79",tag:"TANK DASH"},
- "cameronbed+tolerreaks":{name:"Lost Bed Delivery",color:"#ffd34d",tag:"FURNITURE"},
- "haydenface+jackgun":{name:"Sniper Beam",color:"#ffe66d",tag:"WEAKPOINT"},
- "charliebeer+keithbeef":{name:"Acid Milk",color:"#dfffe8",tag:"CORROSIVE"},
- "cecehockey+hockey":{name:"Stick Tantrum",color:"#ff4da6",tag:"DOUBLE STICK"},
- "grantpass+johan":{name:"Detention Debugger",color:"#75e6ff",tag:"FREEZE"},
- "alirally+rydergolf":{name:"Angle Drive",color:"#ffd34d",tag:"BANK SHOT"},
- "averybravery+sword":{name:"Brave Blade",color:"#7dffda",tag:"PARRY CUT"},
- "lillielily+lilliewand":{name:"Flower Swarm",color:"#ff9fe8",tag:"BLOOM"},
- "eloiseheadphones+irelandisland":{name:"Island Amp",color:"#75e6ff",tag:"CHAIN TRAP"}
+ "potion+sword":{name:"Marque Johnson's Forbidden Stick",color:"#ffd34d",tag:"SECRET OP",desc:"A hidden stick fusion that sends a heavy golden shockwave through the whole lane. It is intentionally rare and much stronger than normal fusions."},
+ "dabtech+leoyu":{name:"Iron Soccer Suit",color:"#75e6ff",tag:"MISSILE CROSS",desc:"Soccer footwork locks targets in place while Leo's suit fires a controlled missile cross and a short laser burst."},
+ "chatgpt+plague":{name:"Homework Outbreak",color:"#62ff5b",tag:"PLAGUE DROP",desc:"Falling homework infects enemies with plague clouds. The damage spreads better in tight crowds than against one target."},
+ "boulder+dariusjet":{name:"Meteor Runway",color:"#d7f3ff",tag:"JET CRATER",desc:"A jet screams across the arena and cracks the ground into a rolling boulder crater."},
+ "brandonmuscles+nicholaswrestle":{name:"Suplex Pump",color:"#ff4d6d",tag:"GRAB SHOCK",desc:"A grapple shockwave yanks the closest enemies together, then flexes them backward with heavy knockback."},
+ "gioguitar+motyrap":{name:"Concert Wave",color:"#b45cff",tag:"SOUNDSTORM",desc:"Guitar notes ride on beatwaves, pushing zombies away while dealing steady rhythm damage."},
+ "rydergolf+seamusmoose":{name:"Varsity Cannon",color:"#8edcff",tag:"PRECISION",desc:"Antler-guided golf drives pierce straight through lines of enemies. Clean aim gets the most value."},
+ "justinquads+wyatt":{name:"Monster Sprint",color:"#4dff79",tag:"TANK DASH",desc:"Noah gets a short monster sprint that body-checks enemies, but you still need to steer the charge."},
+ "cameronbed+tolerreaks":{name:"Lost Bed Delivery",color:"#ffd34d",tag:"FURNITURE",desc:"The glove starts misfiring furniture, dropping beds and random objects with big splash zones."},
+ "haydenface+jackgun":{name:"Sniper Beam",color:"#ffe66d",tag:"WEAKPOINT",desc:"A precise boss-cracking beam follows the sniper line. It rewards aiming instead of spamming."},
+ "charliebeer+keithbeef":{name:"Acid Milk",color:"#dfffe8",tag:"CORROSIVE",desc:"Pressurized milk becomes corrosive splash damage that slows and burns packed Henrys."},
+ "cecehockey+hockey":{name:"Stick Tantrum",color:"#ff4da6",tag:"DOUBLE STICK",desc:"Two hockey sticks ricochet aggressively, bouncing around the arena with joke-weapon chaos."},
+ "grantpass+johan":{name:"Detention Debugger",color:"#75e6ff",tag:"FREEZE",desc:"Hall passes create blue detention fields that freeze enemies and debug-drain them over time."},
+ "alirally+rydergolf":{name:"Angle Drive",color:"#ffd34d",tag:"BANK SHOT",desc:"Ricochet alley shots turn into golf drives that reward wall angles and clean rebounds."},
+ "averybravery+sword":{name:"Brave Blade",color:"#7dffda",tag:"PARRY CUT",desc:"A brief bravery shield charges a counter slash. Taking risks near enemies makes the blade stronger."},
+ "lillielily+lilliewand":{name:"Flower Swarm",color:"#ff9fe8",tag:"BLOOM",desc:"Fairies carry blooming petals into enemies, then explode in pink chain bursts."},
+ "eloiseheadphones+irelandisland":{name:"Island Amp",color:"#75e6ff",tag:"CHAIN TRAP",desc:"Island traps become speaker amps, zapping the first enemy and chaining lightning through nearby targets."}
 };
 function campaignZoneForWave(wave=1){return CAMPAIGN_ZONES.find(z=>wave>=z.waves[0]&&wave<=z.waves[1])||CAMPAIGN_ZONES[CAMPAIGN_ZONES.length-1]}
 function houseZoneForWave(wave=1){return HOUSE_ARC_ZONES.find(z=>wave>=z.waves[0]&&wave<=z.waves[1])||HOUSE_ARC_ZONES[HOUSE_ARC_ZONES.length-1]}
@@ -435,6 +443,18 @@ function weaponBaseName(id){return weapons.find(w=>w.id===id)?.name||(id==="park
 function fusionKey(a,b){return [a,b].sort().join("+")}
 function fusionName(a,b){return `${weaponBaseName(a)} + ${weaponBaseName(b)}`}
 function fusionDisplayName(key,a,b){return (FUSION_SPECIALS[key]&&FUSION_SPECIALS[key].name)||fusionName(a,b)}
+function fusionInfo(key,primary=null,partner=null,locked=false){
+ const parts=key.split("+"),a=primary||parts[0],b=partner||parts.find(p=>p!==a)||parts[1]||parts[0],spec=FUSION_SPECIALS[key];
+ const pair=locked?"Mystery recipe":parts.map(weaponBaseName).join(" + ");
+ if(spec)return {name:spec.name,tag:spec.tag,pair,effect:spec.desc,status:locked?"Locked clue":"Special fusion discovered"};
+ return {name:fusionName(a,b),tag:"CROSS FUSION",pair,effect:`Combines ${weaponBaseName(a)} with ${weaponBaseName(b)}. ${fusionSummary(b)} while your main weapon keeps its normal attack.`,status:locked?"Locked combo":"Discovered combo"};
+}
+function fusionCardContents(key,{name=null,locked=false,hint="",status="",primary=null,partner=null}={}){
+ const info=fusionInfo(key,primary,partner,locked),display=name||info.name,tag=locked?"LOCKED CLUE":info.tag;
+ const extra=hint?`<br><b>Hint:</b> ${hint}`:"";
+ const state=status||info.status;
+ return `<canvas class="fusionArt" width="240" height="96"></canvas><div class="name">${display}</div><div class="fusionPair">${info.pair}</div><div class="fusionDesc"><b>Effect:</b> ${info.effect}${extra}<br><b>Status:</b> ${state}</div><div class="fusionTag">${tag}</div>`;
+}
 function fusionSummary(id){
  return ({
   potion:"adds short demon sparks after attacks",sword:"adds a fast bonus slash",nicholaswrestle:"adds a grappling shove",hockey:"adds one bouncing puck",seamusmoose:"adds a lacrosse burst shot",
@@ -460,25 +480,27 @@ function showFusionBook(){
  state="fusionbook";hud.hidden=true;closeOverlays();profile.fusions=profile.fusions||{};
  const total=weapons.length*(weapons.length-1)/2,found=Object.keys(profile.fusions).length;
  const p=panel(`<div class="title">Fusion Book</div><p class="sub">Discovered combos are saved forever. Locked cards show hints so secret weapons feel like something you can hunt.</p><div class="profileLine">Discovered: ${found} / ${total}</div><div class="shopGrid"></div><div class="row"></div>`);
- p.classList.add("recordsPanel");
+ p.classList.add("recordsPanel","fusionPanel");
  const grid=p.querySelector(".shopGrid");
- const discovered=Object.entries(profile.fusions).sort((a,b)=>a[1].name.localeCompare(b[1].name));
+ const discovered=Object.entries(profile.fusions).sort((a,b)=>(a[1].name||"").localeCompare(b[1].name||""));
  if(!discovered.length){const c=document.createElement("div");c.className="card";c.innerHTML=`<div class="icon">?</div><div class="name">No fusions discovered yet</div><div class="desc">Clear a wave, open the Fusion Lab, and combine two weapons.</div>`;grid.append(c)}
- for(const [key,f] of discovered){const c=document.createElement("div");c.className="card equipped";c.innerHTML=`<canvas class="fusionArt" width="240" height="96"></canvas><div class="name">${f.name}</div><div class="desc">${key.split("+").map(weaponBaseName).join(" + ")}<br>${f.secret?"OP easter egg discovered":(FUSION_SPECIALS[key]?.tag||"Combo discovered")}</div>`;grid.append(c);drawFusionArt(c.querySelector("canvas"),key,false)}
+ for(const [key,f] of discovered){const c=document.createElement("div");c.className="card fusionCard equipped";const info=fusionInfo(key);c.innerHTML=fusionCardContents(key,{name:FUSION_SPECIALS[key]?info.name:f.name,locked:false,status:f.secret?"Secret easter egg discovered":"Ready to use when this pair is rolled"});grid.append(c);drawFusionArt(c.querySelector("canvas"),key,false)}
  for(const [key,label,hint] of FUSION_CLUES){
   if(profile.fusions[key])continue;
-  const c=document.createElement("div");c.className="card";c.innerHTML=`<canvas class="fusionArt" width="240" height="96"></canvas><div class="name">${label}</div><div class="desc">${hint}</div>`;grid.append(c);drawFusionArt(c.querySelector("canvas"),key,true);
+  const c=document.createElement("div");c.className="card fusionCard";c.innerHTML=fusionCardContents(key,{name:label,locked:true,hint,status:"Undiscovered"});grid.append(c);drawFusionArt(c.querySelector("canvas"),key,true);
  }
  p.querySelector(".row").append(button("Back","blue",showMenu),button("Weapon Select","green",showWeapons),button("Records","ghost",showRecords));
 }
 function showFusionChoices(next){
  const primary=game.weapon;
  const p=panel(`<div class="title">Weapon Fusion Lab</div><p class="sub">Current weapon: ${weaponDisplay(primary,game)}. Pick any second weapon to cross-fuse it with.</p><div class="shopGrid fusionGrid"></div><div class="row"></div>`);
+ p.classList.add("fusionPanel");
  const grid=p.querySelector(".shopGrid");grid.style.maxHeight="56vh";grid.style.overflowY="auto";
  for(const w of weapons.filter(w=>w.id!==primary)){
- const c=document.createElement("div");c.className="card";
+ const c=document.createElement("div");c.className="card fusionCard";
   const key=fusionKey(primary,w.id),special=FUSION_SPECIALS[key];
-  c.innerHTML=`<canvas class="fusionArt" width="240" height="96"></canvas><div class="name">${special?special.name:w.name}</div><div class="desc">${special?special.tag+": ":""}${fusionSummary(w.id)}</div>`;
+  const info=fusionInfo(key,primary,w.id,false);
+  c.innerHTML=fusionCardContents(key,{name:special?info.name:`Fuse With ${w.name}`,locked:false,primary,partner:w.id,status:special?"Special combo available":"Standard cross-fusion"});
   drawFusionArt(c.querySelector("canvas"),key,false);
   c.onclick=()=>{game.fusionCount=(game.fusionCount||0)+1;game.fusionCd=0;shopOpen=false;clearUI();if(key==="potion+sword"){game.weapon="marquestick";game.fusion=null;game.secretStick=true;game.weaponCd=0;discoverFusion(key,"Marque Johnson's Stick",true);burst(game.p.x,game.p.y,"#ffd34d",70,10);rumble(24)}else{game.fusion={primary,partner:w.id,key,name:fusionDisplayName(key,primary,w.id)};discoverFusion(key,game.fusion.name,false);flash(`FUSED: ${game.fusion.name}`,2400);burst(game.p.x,game.p.y,special?.color||"#7dffda",42,8)}next&&next()};
   grid.append(c);
@@ -1605,7 +1627,7 @@ function bg(){
 }
 function drawBossBackdrop(id){
  ctx.save();
- const floorY=H*.72;
+ const floorY=H*.72,t=tick;
  if(STORY_BOSS_IDS.includes(id)){
   const info=HOUSE_BOSSES[id],zone=campaignZoneForBoss(id),enter=easeOut(clamp((t-50)/125,0,1)),pulse=clamp((t-135)/100,0,1);
   const bg2=ctx.createLinearGradient(0,0,0,H);bg2.addColorStop(0,zone.top);bg2.addColorStop(.56,zone.mid);bg2.addColorStop(1,zone.floor);ctx.fillStyle=bg2;ctx.fillRect(0,0,W,H);
@@ -1999,7 +2021,9 @@ function startRun(){startMusic();closeOverlays();clearUI();hud.hidden=false;game
 function startHouseArc(){
  startMusic();closeOverlays();clearUI();hud.hidden=false;game=newGame();game.houseArc=true;game.practice=false;state="arena";
  game.coins+=20;game.shield+=1;game.rankUpgradeChoices=3;
- startHouseWave(1);flash("House Arc: Ken House");
+ game.wave=1;game.zone=houseZoneForWave(1);game.waveStats=null;game.mode="boss-intro";
+ flash("House Arc: Behr the Bear");
+ startBoss("behr");
 }
 function openShop(next){
  shopOpen=true;document.getElementById("shop").classList.add("open");document.getElementById("shopCoins").textContent=`Coins: ${game.coins}`;
@@ -2080,7 +2104,7 @@ function nextHouseWave(){
  showWaveRank(proceed);
 }
 function startBoss(id){
- game.mode="boss-intro";sound("boss");const names={...Object.fromEntries(Object.entries(HOUSE_BOSSES).map(([k,v])=>[k,`${v.name} Arrives`])),jordan:"Mr. Jorden Arrives",gavin:"Gavin Sutter Hits the Ice",parker:"Parker Has Arrived",goldenberg:"Goldburg Enters",demonicgoldenberg:"Goldburg Ate Colin's Sword",max:"Max Prenner Enters the Lab",isaac:"Isaac Steps Out of the Static",jennifer:"Jennifer Kim Warps the Screen",aiden:"Hayden Opens the Door",chris_chase:"Chris & Chase Start the Set",tate:"Tate Ponkos Boots Up",streeter:"Mr. Streeter Explains Physics",colin:"Colin Ryu Teleports In",jamieho:"Jamie Ho Takes Office",bowe:"Bowe Watermen Towers Over You",mrg:"Mr. F Breaks Through",mrsg:"Mrs. F Mech Suit",tung:"Tung Tung Sahur Enters",envision:"Envision Math Textbook Opens",tsai:"Tsai Dining Food Fight",rutledge:"Rutledge Final Exam",final:"Undead Goldburg"};startCutscene(names[id],id,()=>{game.mode="boss";game.boss=makeBoss(id);flash(names[id])});
+ game.mode="boss-intro";sound("boss");const names={...Object.fromEntries(Object.entries(HOUSE_BOSSES).map(([k,v])=>[k,`${v.name} Arrives`])),jordan:"Mr. Jorden Arrives",gavin:"Gavin Sutter Hits the Ice",parker:"Parker Has Arrived",goldenberg:"Goldburg Enters",demonicgoldenberg:"Goldburg Ate Colin's Sword",max:"Max Prenner Enters the Lab",isaac:"Isaac Steps Out of the Static",jennifer:"Jennifer Kim Warps the Screen",aiden:"Hayden Opens the Door",chris_chase:"Chris & Chase Start the Set",tate:"Tate Ponkos Boots Up",streeter:"Mr. Streeter Explains Physics",colin:"Colin Ryu Teleports In",jamieho:"Jamie Ho Takes Office",bowe:"Bowe Watermen Towers Over You",mrg:"Mr. F Breaks Through",mrsg:"Mrs. F Mech Suit",tung:"Tung Tung Sahur Enters",envision:"Envision Math Textbook Opens",tsai:"Tsai Dining Food Fight",rutledge:"Rutledge Final Exam",final:"Undead Goldburg"};startCutscene(names[id],id,()=>{game.mode="boss";game.boss=makeBoss(id);game.projectiles.length=0;game.hazards.length=0;game.attacks.length=0;game.iframes=Math.max(game.iframes||0,150);if(HOUSE_BOSSES[id]&&game.p){game.p.x=W/2;game.p.y=H*.82;game.p.lastX=game.p.x;game.p.lastY=game.p.y}flash(names[id])});
 }
 function makeBoss(id){
  const tuned=b=>{const diff=game&&game.diff?game.diff:difficulties.normal,house=!!HOUSE_BOSSES[b.id],endgame=["tung","envision","tsai","rutledge"].includes(b.id),early=["jordan","gavin","parker","goldenberg","max"].includes(b.id),late=["devin","andi","streeter","colin","jamieho","bowe","mrg","mrsg"].includes(b.id);b.hp=Math.round(b.hp*diff.bossHp*(endgame?9.5:house?1.65:late?1.38:early?1.14:1.18));b.maxHp=b.hp;if(house){b.cd=Math.max(24,Math.floor((b.cd||60)*.82));b.hardHouse=true}if(endgame)b.impossible=true;return b};
@@ -3139,10 +3163,11 @@ function drawBossAura(b,color,label){
  ctx.save();ctx.globalAlpha=.18+.05*Math.sin(tick*.08);ctx.fillStyle=color;ctx.beginPath();ctx.ellipse(b.x,b.y+10,b.r*2.1,b.r*1.45,0,0,TAU);ctx.fill();ctx.strokeStyle=color;ctx.lineWidth=3;ctx.setLineDash([10,9]);ctx.lineDashOffset=-tick*1.4;ctx.beginPath();ctx.arc(b.x,b.y,b.r+46+Math.sin(tick*.08)*4,0,TAU);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=.75;ctx.fillStyle="#eef6ff";ctx.font="900 10px Courier New";ctx.textAlign="center";ctx.fillText(label,b.x,b.y+b.r+58);ctx.restore();
 }
 function drawStoryBoss(x,y,s=1,id,flash=false){
- ctx.save();ctx.translate(x,y);ctx.scale(s,s);if(flash)ctx.globalAlpha=.62;
+ ctx.save();ctx.translate(x,y);ctx.scale(s,s);if(flash)ctx.globalAlpha=id==="behr"?.92:.72;
  const bob=Math.sin(tick*.08)*3;
  ctx.fillStyle="rgba(0,0,0,.28)";ctx.beginPath();ctx.ellipse(0,58,78,14,0,0,TAU);ctx.fill();
  if(id==="behr"){
+  ctx.save();ctx.shadowBlur=18;ctx.shadowColor="#ff9f1c";ctx.strokeStyle="rgba(255,211,77,.42)";ctx.lineWidth=7;ctx.beginPath();ctx.ellipse(0,0+bob,76,84,0,0,TAU);ctx.stroke();ctx.restore();
   const fur=ctx.createRadialGradient(-25,-35,8,0,0,92);fur.addColorStop(0,"#c48745");fur.addColorStop(.48,"#7a3d18");fur.addColorStop(1,"#281107");ctx.fillStyle=fur;ctx.beginPath();ctx.ellipse(0,8+bob,66,72,0,0,TAU);ctx.fill();ctx.strokeStyle="#1a0803";ctx.lineWidth=5;ctx.stroke();
   for(const side of [-1,1]){ctx.save();ctx.translate(side*58,0+bob);ctx.rotate(side*(.35+Math.sin(tick*.11)*.12));ctx.fillStyle="#6b3515";ctx.beginPath();ctx.ellipse(0,0,24,50,side*.25,0,TAU);ctx.fill();ctx.fillStyle="#f7e6c8";for(let i=-2;i<=2;i++){ctx.beginPath();ctx.moveTo(i*8,44);ctx.lineTo(i*8+side*5,64);ctx.lineTo(i*8+side*11,44);ctx.fill()}ctx.restore()}
   ctx.fillStyle="#8a4b22";ctx.beginPath();ctx.arc(0,-70+bob,43,0,TAU);ctx.fill();ctx.fillStyle="#2a1208";ctx.beginPath();ctx.arc(-22,-91+bob,14,0,TAU);ctx.arc(22,-91+bob,14,0,TAU);ctx.fill();ctx.fillStyle="#ff7ab6";ctx.beginPath();ctx.ellipse(0,-51+bob,17,12,0,0,TAU);ctx.fill();ctx.strokeStyle="#ff7ab6";ctx.lineWidth=8;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(0,-44+bob);ctx.quadraticCurveTo(48+Math.sin(tick*.14)*20,-18,18,23);ctx.stroke();ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(-13,-73+bob,6,0,TAU);ctx.arc(13,-73+bob,6,0,TAU);ctx.fill();ctx.fillStyle="#111";ctx.beginPath();ctx.arc(-13,-72+bob,3,0,TAU);ctx.arc(13,-72+bob,3,0,TAU);ctx.fill();
@@ -3229,7 +3254,22 @@ function drawCutscene(){
  if(!cutscene){state="arena";return}
  tick++;bg();const t=cutscene.t++,id=cutscene.id;ctx.save();ctx.translate(shakeX,shakeY);
  ctx.fillStyle="rgba(0,0,0,.38)";ctx.fillRect(0,0,W,H);ctx.textAlign="center";
- if(id==="jordan"){
+ if(STORY_BOSS_IDS.includes(id)){
+  const info=HOUSE_BOSSES[id],zone=campaignZoneForBoss(id),enter=easeOut(clamp((t-42)/135,0,1)),pulse=clamp((t-95)/120,0,1);
+  const bg2=ctx.createLinearGradient(0,0,0,H);bg2.addColorStop(0,zone.top);bg2.addColorStop(.58,zone.mid);bg2.addColorStop(1,zone.floor);ctx.fillStyle=bg2;ctx.fillRect(0,0,W,H);
+  ctx.fillStyle="rgba(0,0,0,.28)";ctx.fillRect(W*.08,H*.17,W*.84,H*.66);ctx.strokeStyle=colorWithAlpha(info.color,.85);ctx.lineWidth=5;ctx.strokeRect(W*.08,H*.17,W*.84,H*.66);
+  ctx.save();ctx.globalAlpha=.16+.25*pulse;ctx.strokeStyle=info.color;ctx.lineWidth=3;for(let i=0;i<18;i++){const x=W*.1+i*W*.045+Math.sin(t*.04+i)*22,y1=H*.18,y2=H*.84;ctx.beginPath();ctx.moveTo(x,y1);ctx.lineTo(x+Math.sin(t*.05+i)*60,y2);ctx.stroke()}ctx.restore();
+  if(id==="behr"){ctx.fillStyle="#3a1d10";ctx.fillRect(W*.12,H*.68,W*.76,54);ctx.fillStyle="#7a3d18";for(let i=0;i<7;i++){ctx.beginPath();ctx.arc(W*.17+i*W*.11,H*.72+Math.sin(t*.08+i)*8,18,0,TAU);ctx.fill()}ctx.strokeStyle="#ff7ab6";ctx.lineWidth=6;ctx.setLineDash([18,12]);ctx.beginPath();ctx.moveTo(W*.18,H*.26);ctx.quadraticCurveTo(W*.46,H*.42,W*.34,H*.62);ctx.stroke();ctx.setLineDash([])}
+  else if(id==="harrison"){ctx.fillStyle="rgba(255,230,109,.24)";for(let i=0;i<10;i++){ctx.beginPath();ctx.ellipse(W*.15+i*W*.08,H*.73+Math.sin(t*.08+i)*25,24,14,0,0,TAU);ctx.fill()}}
+  else if(id==="asher"){ctx.save();ctx.globalAlpha=.32;ctx.fillStyle="#ff7a1c";for(let i=0;i<12;i++){ctx.beginPath();ctx.arc((i*97+t*2)%W,H*.22+(i*43)%H,8+i%3*5,0,TAU);ctx.fill()}ctx.restore()}
+  else if(id==="steve"){ctx.strokeStyle="#62ff5b";ctx.lineWidth=10;ctx.beginPath();for(let i=0;i<12;i++){const x=W*.08+i*W*.08,y=H*.72+Math.sin(t*.08+i)*45;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)}ctx.stroke()}
+  else if(id==="livialamps"){ctx.save();ctx.globalAlpha=.35+.25*pulse;ctx.fillStyle="#fff2a8";for(let i=0;i<5;i++){ctx.beginPath();ctx.moveTo(W*.5,H*.22);ctx.lineTo(W*(.1+i*.2),H*.84);ctx.lineTo(W*(.18+i*.2),H*.84);ctx.closePath();ctx.fill()}ctx.restore()}
+  else if(id==="devin"){ctx.save();ctx.globalAlpha=.22+.28*pulse;ctx.fillStyle="#ff334d";ctx.beginPath();ctx.ellipse(W/2,H*.16,220,80,0,0,TAU);ctx.fill();ctx.restore()}
+  else if(id==="andi"){ctx.save();ctx.globalAlpha=.45;ctx.fillStyle="#a6ff3d";for(let i=0;i<90;i++){ctx.beginPath();ctx.arc(stableRand(8400+i*19,0,W),stableRand(8500+i*23,H*.18,H*.82),2+i%3,0,TAU);ctx.fill()}ctx.restore()}
+  ctx.save();ctx.translate(W/2,H*.66+(1-enter)*180);ctx.scale(1.35,1.35);drawStoryBoss(0,0,info.scale,id,t%10<2);ctx.restore();
+  if(t>220)drawBubble(W/2,H*.34,({behr:"The bear house rule: dodge the tongue.",harrison:"Eggs first. Chickens second. Panic third.",asher:"I am the ceiling now.",steve:"The floor has learned to snake.",lola:"Hop fast or get flattened.",livialamps:"Do not stand in the pretty light.",devin:"Only the legs were the warning.",andi:"The queen brought the whole colony."})[id],40);
+  ctx.fillStyle=info.color;ctx.font=`900 ${Math.min(48,Math.max(26,W/20))}px Courier New`;ctx.fillText(info.name.toUpperCase(),W/2,68);
+ } else if(id==="jordan"){
   const open=easeInOut(clamp((t-28)/120,0,1)),walk=easeOut(clamp((t-138)/92,0,1)),aura=clamp((t-80)/110,0,1);
   ctx.fillStyle="#101827";ctx.fillRect(0,0,W,H);ctx.fillStyle="#253044";ctx.fillRect(W*.12,H*.18,W*.76,H*.62);ctx.strokeStyle="#eaf0ff";ctx.lineWidth=4;ctx.strokeRect(W*.12,H*.18,W*.76,H*.62);
   ctx.fillStyle="#eaf0ff";ctx.font="900 20px Courier New";ctx.fillText("ROUND 2: FOCUS",W/2,H*.25);
