@@ -138,22 +138,41 @@ const STORY_BOSS_IDS=Object.keys(HOUSE_BOSSES);
 const FUSION_CLUES=[
  ["potion+sword","secret stick","Marie plus Colin makes the forbidden stick."],
  ["dabtech+leoyu","rocket volley","Soccer tech plus Iron Man makes a missile cross."],
- ["plague+chatgpt","homework outbreak","AI plus plague spreads homework sickness."],
+ ["chatgpt+plague","homework outbreak","AI plus plague spreads homework sickness."],
  ["boulder+dariusjet","meteor runway","Jet impact plus boulder turns the lane into a crater."],
  ["brandonmuscles+nicholaswrestle","suplex pump","Muscles plus wrestling makes a heavier slam."],
  ["gioguitar+motyrap","concert wave","Guitar plus rap sends a real soundstorm."],
  ["rydergolf+seamusmoose","varsity cannon","Golf plus lacrosse creates fast precision shots."],
- ["wyatt+justinquads","monster sprint","Titan mode plus quads turns Noah into a charging tank."],
+ ["justinquads+wyatt","monster sprint","Titan mode plus quads turns Noah into a charging tank."],
  ["cameronbed+tolerreaks","lost bed delivery","The glove starts throwing bedroom furniture."],
- ["jackgun+haydenface","sniper beam","Fourth-shot aim plus face beam hits boss weak points."],
+ ["haydenface+jackgun","sniper beam","Fourth-shot aim plus face beam hits boss weak points."],
  ["charliebeer+keithbeef","acid milk","Acid can plus milk gun makes corrosive splash shots."],
  ["cecehockey+hockey","stick tantrum","Two sticks make an extremely aggressive joke combo."],
  ["grantpass+johan","detention debugger","Hall pass plus debugger turns enemies into frozen rule-breakers."],
  ["alirally+rydergolf","angle drive","Ali angles plus Ryder golf makes bank-shot drives."],
  ["averybravery+sword","brave blade","Avery's barrier plus Colin's sword rewards risky counters."],
  ["lillielily+lilliewand","flower swarm","Lily petals plus fairy wand makes a blooming fairy storm."],
- ["irelandisland+eloiseheadphones","island amp","Ireland's trap plus Eloise's headphones makes chain lightning islands."]
+ ["eloiseheadphones+irelandisland","island amp","Ireland's trap plus Eloise's headphones makes chain lightning islands."]
 ];
+const FUSION_SPECIALS={
+ "potion+sword":{name:"Marque Johnson's Forbidden Stick",color:"#ffd34d",tag:"SECRET OP"},
+ "dabtech+leoyu":{name:"Iron Soccer Suit",color:"#75e6ff",tag:"MISSILE CROSS"},
+ "chatgpt+plague":{name:"Homework Outbreak",color:"#62ff5b",tag:"PLAGUE DROP"},
+ "boulder+dariusjet":{name:"Meteor Runway",color:"#d7f3ff",tag:"JET CRATER"},
+ "brandonmuscles+nicholaswrestle":{name:"Suplex Pump",color:"#ff4d6d",tag:"GRAB SHOCK"},
+ "gioguitar+motyrap":{name:"Concert Wave",color:"#b45cff",tag:"SOUNDSTORM"},
+ "rydergolf+seamusmoose":{name:"Varsity Cannon",color:"#8edcff",tag:"PRECISION"},
+ "justinquads+wyatt":{name:"Monster Sprint",color:"#4dff79",tag:"TANK DASH"},
+ "cameronbed+tolerreaks":{name:"Lost Bed Delivery",color:"#ffd34d",tag:"FURNITURE"},
+ "haydenface+jackgun":{name:"Sniper Beam",color:"#ffe66d",tag:"WEAKPOINT"},
+ "charliebeer+keithbeef":{name:"Acid Milk",color:"#dfffe8",tag:"CORROSIVE"},
+ "cecehockey+hockey":{name:"Stick Tantrum",color:"#ff4da6",tag:"DOUBLE STICK"},
+ "grantpass+johan":{name:"Detention Debugger",color:"#75e6ff",tag:"FREEZE"},
+ "alirally+rydergolf":{name:"Angle Drive",color:"#ffd34d",tag:"BANK SHOT"},
+ "averybravery+sword":{name:"Brave Blade",color:"#7dffda",tag:"PARRY CUT"},
+ "lillielily+lilliewand":{name:"Flower Swarm",color:"#ff9fe8",tag:"BLOOM"},
+ "eloiseheadphones+irelandisland":{name:"Island Amp",color:"#75e6ff",tag:"CHAIN TRAP"}
+};
 function campaignZoneForWave(wave=1){return CAMPAIGN_ZONES.find(z=>wave>=z.waves[0]&&wave<=z.waves[1])||CAMPAIGN_ZONES[CAMPAIGN_ZONES.length-1]}
 function houseZoneForWave(wave=1){return HOUSE_ARC_ZONES.find(z=>wave>=z.waves[0]&&wave<=z.waves[1])||HOUSE_ARC_ZONES[HOUSE_ARC_ZONES.length-1]}
 function campaignZoneForBoss(id,wave=1){
@@ -415,6 +434,7 @@ function weaponDisplay(id,g=game){
 function weaponBaseName(id){return weapons.find(w=>w.id===id)?.name||(id==="parkerglass"?"Parker's Glasses":id==="marquestick"?"Marque Johnson's Stick":id)}
 function fusionKey(a,b){return [a,b].sort().join("+")}
 function fusionName(a,b){return `${weaponBaseName(a)} + ${weaponBaseName(b)}`}
+function fusionDisplayName(key,a,b){return (FUSION_SPECIALS[key]&&FUSION_SPECIALS[key].name)||fusionName(a,b)}
 function fusionSummary(id){
  return ({
   potion:"adds short demon sparks after attacks",sword:"adds a fast bonus slash",nicholaswrestle:"adds a grappling shove",hockey:"adds one bouncing puck",seamusmoose:"adds a lacrosse burst shot",
@@ -444,10 +464,10 @@ function showFusionBook(){
  const grid=p.querySelector(".shopGrid");
  const discovered=Object.entries(profile.fusions).sort((a,b)=>a[1].name.localeCompare(b[1].name));
  if(!discovered.length){const c=document.createElement("div");c.className="card";c.innerHTML=`<div class="icon">?</div><div class="name">No fusions discovered yet</div><div class="desc">Clear a wave, open the Fusion Lab, and combine two weapons.</div>`;grid.append(c)}
- for(const [key,f] of discovered){const c=document.createElement("div");c.className="card equipped";c.innerHTML=`<div class="icon">${f.secret?"SECRET":"FUSE"}</div><div class="name">${f.name}</div><div class="desc">${key.split("+").map(weaponBaseName).join(" + ")}<br>${f.secret?"OP easter egg discovered":"Combo discovered"}</div>`;grid.append(c)}
+ for(const [key,f] of discovered){const c=document.createElement("div");c.className="card equipped";c.innerHTML=`<canvas class="fusionArt" width="240" height="96"></canvas><div class="name">${f.name}</div><div class="desc">${key.split("+").map(weaponBaseName).join(" + ")}<br>${f.secret?"OP easter egg discovered":(FUSION_SPECIALS[key]?.tag||"Combo discovered")}</div>`;grid.append(c);drawFusionArt(c.querySelector("canvas"),key,false)}
  for(const [key,label,hint] of FUSION_CLUES){
   if(profile.fusions[key])continue;
-  const c=document.createElement("div");c.className="card";c.innerHTML=`<div class="icon">LOCKED</div><div class="name">${label}</div><div class="desc">${hint}</div>`;grid.append(c);
+  const c=document.createElement("div");c.className="card";c.innerHTML=`<canvas class="fusionArt" width="240" height="96"></canvas><div class="name">${label}</div><div class="desc">${hint}</div>`;grid.append(c);drawFusionArt(c.querySelector("canvas"),key,true);
  }
  p.querySelector(".row").append(button("Back","blue",showMenu),button("Weapon Select","green",showWeapons),button("Records","ghost",showRecords));
 }
@@ -456,9 +476,11 @@ function showFusionChoices(next){
  const p=panel(`<div class="title">Weapon Fusion Lab</div><p class="sub">Current weapon: ${weaponDisplay(primary,game)}. Pick any second weapon to cross-fuse it with.</p><div class="shopGrid fusionGrid"></div><div class="row"></div>`);
  const grid=p.querySelector(".shopGrid");grid.style.maxHeight="56vh";grid.style.overflowY="auto";
  for(const w of weapons.filter(w=>w.id!==primary)){
-  const c=document.createElement("div");c.className="card";
-  c.innerHTML=`<div class="icon">${w.icon}</div><div class="name">${w.name}</div><div class="desc">${fusionSummary(w.id)}</div>`;
-  c.onclick=()=>{const key=fusionKey(primary,w.id);game.fusionCount=(game.fusionCount||0)+1;game.fusionCd=0;shopOpen=false;clearUI();if(key==="potion+sword"){game.weapon="marquestick";game.fusion=null;game.secretStick=true;game.weaponCd=0;discoverFusion(key,"Marque Johnson's Stick",true);burst(game.p.x,game.p.y,"#ffd34d",70,10);rumble(24)}else{game.fusion={primary,partner:w.id,key,name:fusionName(primary,w.id)};discoverFusion(key,game.fusion.name,false);flash(`FUSED: ${game.fusion.name}`,2400);burst(game.p.x,game.p.y,"#7dffda",42,8)}next&&next()};
+ const c=document.createElement("div");c.className="card";
+  const key=fusionKey(primary,w.id),special=FUSION_SPECIALS[key];
+  c.innerHTML=`<canvas class="fusionArt" width="240" height="96"></canvas><div class="name">${special?special.name:w.name}</div><div class="desc">${special?special.tag+": ":""}${fusionSummary(w.id)}</div>`;
+  drawFusionArt(c.querySelector("canvas"),key,false);
+  c.onclick=()=>{game.fusionCount=(game.fusionCount||0)+1;game.fusionCd=0;shopOpen=false;clearUI();if(key==="potion+sword"){game.weapon="marquestick";game.fusion=null;game.secretStick=true;game.weaponCd=0;discoverFusion(key,"Marque Johnson's Stick",true);burst(game.p.x,game.p.y,"#ffd34d",70,10);rumble(24)}else{game.fusion={primary,partner:w.id,key,name:fusionDisplayName(key,primary,w.id)};discoverFusion(key,game.fusion.name,false);flash(`FUSED: ${game.fusion.name}`,2400);burst(game.p.x,game.p.y,special?.color||"#7dffda",42,8)}next&&next()};
   grid.append(c);
  }
  p.querySelector(".row").append(button("Back","ghost",()=>showUpgradeChoices(next)));
@@ -1949,6 +1971,23 @@ function drawWeaponMenuArt(canvas,id){
  else {drawCan()}
  c.restore();
 }
+function drawFusionArt(canvas,key,locked=false){
+ const c=canvas.getContext("2d"),w=canvas.width,h=canvas.height,parts=key.split("+"),spec=FUSION_SPECIALS[key]||{};
+ const miniColor=id=>({potion:"#e044ff",sword:"#bce6ff",nicholaswrestle:"#ffb52b",hockey:"#dfe7ff",seamusmoose:"#8edcff",haydenface:"#ffe66d",dariusjet:"#d7f3ff",dabtech:"#ffffff",tolerreaks:"#ffd34d",rydergolf:"#dff7ff",brandonmuscles:"#ff4d6d",marquesbasketball:"#ff7a1c",aydencanada:"#dffbff",leoyu:"#8be9ff",aydahair:"#f3d4ff",wyatt:"#4dff79",cameronbed:"#ffd34d",johan:"#75e6ff",grantpass:"#75e6ff",boulder:"#a87a55",chatgpt:"#00f0d8",plague:"#62ff5b",enochscooter:"#ff9f1c",motyrap:"#b45cff",gioguitar:"#7dffda",justinquads:"#4dff79",cecehockey:"#ff4da6",charliebeer:"#a6ff3d",keithbeef:"#f7fbff",dieseldirtbike:"#c07a38",lilliewand:"#ffc7ff",alirally:"#ffd34d",averybravery:"#7dffda",lillielily:"#ff9fe8",irelandisland:"#62ff5b",eloiseheadphones:"#75e6ff",mattbluejay:"#4da3ff",liamspeed:"#ffe66d",jackgun:"#ff334d"})[id]||"#ffd34d";
+ c.clearRect(0,0,w,h);
+ const bg=c.createLinearGradient(0,0,w,h);bg.addColorStop(0,"#050812");bg.addColorStop(.5,locked?"#171725":"#0b1930");bg.addColorStop(1,"#030407");c.fillStyle=bg;c.fillRect(0,0,w,h);
+ const colA=miniColor(parts[0]),colB=miniColor(parts[1]),col=spec.color||"#7dffda";
+ c.save();c.globalAlpha=locked?.18:.34;c.fillStyle=colA;c.beginPath();c.ellipse(w*.28,h*.48,w*.28,h*.78,-.4,0,TAU);c.fill();c.fillStyle=colB;c.beginPath();c.ellipse(w*.72,h*.52,w*.28,h*.78,.4,0,TAU);c.fill();c.restore();
+ c.strokeStyle=locked?"rgba(255,255,255,.16)":col;c.lineWidth=3;c.strokeRect(5,5,w-10,h-10);
+ c.save();c.translate(w*.5,h*.48);
+ for(let i=0;i<14;i++){const a=i*TAU/14+tick*.01,r=locked?28:34+(i%2)*8;c.strokeStyle=i%2?colA:colB;c.globalAlpha=locked?.18:.55;c.lineWidth=i%2?2:3;c.beginPath();c.moveTo(Math.cos(a)*18,Math.sin(a)*12);c.lineTo(Math.cos(a)*r,Math.sin(a)*r*.7);c.stroke()}
+ c.globalAlpha=1;c.fillStyle="#08111c";c.strokeStyle=col;c.lineWidth=3;c.beginPath();c.roundRect(-42,-18,84,36,10);c.fill();c.stroke();
+ c.fillStyle=locked?"#94a3b8":"#fff";c.font="900 13px Courier New";c.textAlign="center";c.textBaseline="middle";c.fillText(locked?"LOCKED":(spec.tag||"FUSION").slice(0,12),0,0);
+ c.restore();
+ const drawBadge=(id,x,color)=>{c.save();c.translate(x,h*.5);c.fillStyle="#0b0f1a";c.strokeStyle=color;c.lineWidth=4;c.beginPath();c.arc(0,0,25,0,TAU);c.fill();c.stroke();c.fillStyle=color;c.font="900 10px Courier New";c.textAlign="center";c.textBaseline="middle";c.fillText((weapons.find(w=>w.id===id)?.icon||id).slice(0,5),0,0);c.restore()};
+ drawBadge(parts[0],w*.2,colA);drawBadge(parts[1],w*.8,colB);
+ c.fillStyle=locked?"#64748b":col;c.font="900 11px Courier New";c.textAlign="center";c.fillText(locked?"???":(spec.name||"Cross Fusion").slice(0,30),w/2,h-13);
+}
 function drawTinyBall(c,x,y,r){c.fillStyle="#fff";c.beginPath();c.arc(x,y,r,0,TAU);c.fill();c.strokeStyle="#111";c.lineWidth=2;c.stroke();c.fillStyle="#111";for(let i=0;i<5;i++){const a=i*TAU/5;c.beginPath();c.arc(x+Math.cos(a)*r*.45,y+Math.sin(a)*r*.45,r*.16,0,TAU);c.fill()}}
 function newGame(){
  const perks=closetPerks(),maxHp=100+perks.hp;
@@ -2026,7 +2065,7 @@ function nextWave(){
  const proceed=()=>{
   if(scheduled==="obby"){openShop(startObby);return}
   if(scheduled){openShop(()=>startBoss(scheduled));return}
-  if(game.wave>=TOTAL_WAVES){winGame();return}
+  if(game.wave>=TOTAL_WAVES){startRutledgeFinal();return}
   showUpgradeChoices(()=>startWave(game.wave+1));
  };
  showWaveRank(proceed);
@@ -2082,8 +2121,8 @@ function bossDefeated(){
  if(game.houseArc){dropHurzyPreworkout(id);if(id==="andi"){winHouseArc();return}showUpgradeChoices(()=>startHouseWave(game.wave+1));return}
  if(id==="parker"){dropHurzyPreworkout(id);showUpgradeChoices(()=>startWave(game.wave+1));return} 
  else if(id==="goldenberg"){dropHurzyPreworkout(id);openShop(()=>startBoss("demonicgoldenberg"));return}
- else if(id==="tsai"||id==="final"){winGame();return}
- else if(id==="rutledge"){ultimateWin();return}
+ else if(id==="tsai"||id==="final"){startRutledgeFinal();return}
+ else if(id==="rutledge"){impossibleReform(game.boss||{id:"rutledge",x:W/2,y:H/2,r:74,hp:1,maxHp:999999,t:0});return}
  else {dropHurzyPreworkout(id);showUpgradeChoices(()=>startWave(game.wave+1))}
 }
 function practiceComplete(id){const p=panel(`<div class="title">Practice Clear</div><p class="sub">You beat ${bossPractice.find(b=>b.id===id)?.name||id}. That pattern is officially less scary now.</p><div class="row"></div>`);state="gameover";hud.hidden=true;closeOverlays();p.querySelector(".row").append(button("Practice Another","green",showBossPractice),button("Weapon Select","blue",showWeapons),button("Main Menu","ghost",showMenu))}
@@ -2107,7 +2146,7 @@ function startObby(){
  o.goalX=x+70;o.worldW=x+420;flash("Obby Time: Reach Heaven");
 }
 function finishObby(){state="arena";hud.hidden=false;startWave(Math.max(game.wave+1,35));game.goal=Math.max(game.goal,58);flash("Back to the arena")}
-function winGame(){stopMusic();const payout=awardProfile("win");game.won=true;state="victory";hud.hidden=true;closeOverlays();const evolved=Object.keys(game.evolved||{}).length,upgrades=Object.values(game.upgrades||{}).reduce((a,b)=>a+b,0),seconds=Math.max(1,Math.floor((tick-game.runStart)/60));const p=panel(`<div class="title">You Won</div><p class="sub">Noah survived ${MAIN_WAVES} main waves, ${TOTAL_WAVES-MAIN_WAVES} extra waves, Jamie's tank army, and the Tsai dining disaster. The hallway is quiet for exactly four seconds.</p><p class="sub">Score: ${game.score} · Kills: ${game.kills} · Coins: ${game.coins} · Time: ${seconds}s</p><p class="sub">Weapon Evolutions: ${evolved} · Upgrades Picked: ${upgrades} · Closet Coins +${payout}</p><div class="row"></div>`);p.querySelector(".row").append(button("Impossible Final Boss: Rutledge","red",startRutledgeFinal),button("Play Again","green",showWeapons),button("Customize","blue",showCustomize),button("Boss Practice","ghost",showBossPractice),button("Main Menu","ghost",showMenu))}
+function winGame(){startRutledgeFinal()}
 function startRutledgeFinal(){
  if(!game)game=newGame();
  startMusic();closeOverlays();clearUI();hud.hidden=false;state="arena";
@@ -2116,7 +2155,16 @@ function startRutledgeFinal(){
  flash("Secret final boss unlocked");
  startBoss("rutledge");
 }
-function ultimateWin(){stopMusic();const payout=awardProfile("rutledge");game.won=true;state="victory";hud.hidden=true;closeOverlays();const p=panel(`<div class="title">Rutledge Defeated</div><p class="sub">You beat the nearly impossible final exam. That took dodging, patience, and probably a very loud keyboard.</p><p class="sub">Score: ${game.score} · Kills: ${game.kills} · Closet Coins +${payout}</p><div class="row"></div>`);p.querySelector(".row").append(button("Play Again","green",showWeapons),button("Boss Practice","blue",showBossPractice),button("Main Menu","ghost",showMenu))}
+function impossibleReform(b){
+ if(!game)return;
+ const loops=(game.impossibleLoops||0)+1;game.impossibleLoops=loops;
+ game.mode="boss";game.boss={...makeBoss("rutledge"),maxHp:Math.round(999999*(1+loops*.45)),phase:1+loops,cd:Math.max(8,20-loops*2),impossible:true};
+ game.boss.hp=game.boss.maxHp;game.boss.x=W/2;game.boss.y=H*.34;
+ game.enemies.length=0;game.projectiles.length=0;game.hazards.length=0;game.attacks.length=0;
+ game.hp=Math.min(game.maxHp,game.hp+Math.max(6,18-loops*2));game.iframes=80;game.wave=TOTAL_WAVES+loops;
+ rumble(34);burst(W/2,H/2,"#ff334d",90,11);flash(`Rutledge reforms stronger. Loop ${loops}. You cannot win.`,3400);
+}
+function ultimateWin(){impossibleReform(game&&game.boss?game.boss:{id:"rutledge",x:W/2,y:H/2,r:74,hp:1,maxHp:999999,t:0})}
 function gameOver(){stopMusic();const payout=awardProfile("gameover");game.over=true;state="gameover";hud.hidden=true;closeOverlays();rumble(30);const p=panel(`<div class="title">Game Over</div><p class="sub">The Henrys got Noah. This is canon only if you let it be.</p><p class="sub">Score: ${game.score} · Kills: ${game.kills} · Wave: ${game.wave} · Closet Coins +${payout}</p><div class="row"></div>`);p.querySelector(".row").append(button("Try Again","green",startRun),button("Weapon Select","blue",showWeapons),button("Customize","ghost",showCustomize))}
 function weaponCooldown(g,n){const perks=closetPerks(),fusionBoost=g&&g.fusion?perks.fusionSpeed||1:1,cd=Math.max(1,Math.round(n*(g.reloadMult||1)*(PACE.weapon||1)*fusionBoost));g.weaponCd=cd;g.weaponMaxCd=cd}
 function infectEnemy(e,power=1){
@@ -2437,6 +2485,25 @@ function applyFusionEffect(g,a,dm=1,size=1){
  if(g.fusionCd>0)return;
  const id=f.partner,o=g.attackOrigin||g.p;
  g.fusionCd=26;
+ if(FUSION_SPECIALS[f.key]){
+  const key=f.key,col=FUSION_SPECIALS[key].color||"#7dffda";
+  if(key==="dabtech+leoyu"){projectile(a-.16,14.5,12*dm,5,88,"rocket");projectile(a+.16,14.5,12*dm,5,88,"rocket");game.attacks.push({kind:"beam",x:o.x,y:o.y,a,len:220,w:11*size,dmg:10*dm,life:8,max:8,color:col,hit:new Set});burst(o.x,o.y,col,8,3);return}
+  if(key==="chatgpt+plague"){falling(clamp(g.p.x+rand(-130,130),60,W-60),clamp(g.p.y+rand(-95,95),100,H-80),18*dm);g.plagueClouds.push({x:o.x+Math.cos(a)*85,y:o.y+Math.sin(a)*70,r:20,maxR:92,life:44,max:44});return}
+  if(key==="boulder+dariusjet"){game.attacks.push({kind:"jet",x:-260,y:clamp(g.p.y+rand(-80,80),92,H-78),life:62,max:62,dmg:22*dm,color:col,hit:new Set});shock(o.x+Math.cos(a)*100,o.y+Math.sin(a)*82,12,96*size,18*dm,"#a87a55");return}
+  if(key==="brandonmuscles+nicholaswrestle"){game.attacks.push({kind:"beam",x:g.p.x,y:g.p.y,a,len:96,w:34,dmg:18*dm,life:9,max:9,color:col,hit:new Set});shock(g.p.x,g.p.y,10,92*size,14*dm,col);g.iframes=Math.max(g.iframes,8);return}
+  if(key==="gioguitar+motyrap"){game.attacks.push({kind:"shock",x:g.p.x,y:g.p.y,r:12,max:112*size,dmg:16*dm,life:28,maxLife:28,color:col,hit:new Set});for(let i=-2;i<=2;i++)projectile(a+i*.18,9.6,8*dm,4.5,92,"note");return}
+  if(key==="rydergolf+seamusmoose"){projectile(a,17.5,16*dm,5,98,"golf",{pierce:true,hit:new Set()});projectile(a-.08,16,10*dm,5.5,90,"lacrosse");projectile(a+.08,16,10*dm,5.5,90,"lacrosse");return}
+  if(key==="justinquads+wyatt"){g.speedBoost=Math.max(g.speedBoost,100);g.iframes=Math.max(g.iframes,8);game.attacks.push({kind:"beam",x:g.p.x,y:g.p.y,a,len:112,w:24,dmg:16*dm,life:8,max:8,color:col,hit:new Set});shock(g.p.x,g.p.y,8,76*size,12*dm,col);return}
+  if(key==="cameronbed+tolerreaks"){fallingBed(clamp(g.p.x+Math.cos(a)*126,60,W-60),clamp(g.p.y+Math.sin(a)*92,95,H-70),24*dm);for(let i=0;i<2;i++)projectile(a+rand(-.35,.35),9.5,9*dm,6,82,"randomobj",{obj:["chair","shoe","binder","cone","calculator"][Math.floor(Math.random()*5)]});return}
+  if(key==="haydenface+jackgun"){projectile(a,18.5,18*dm,4.5,90,"sniper4",{pierce:true,hit:new Set()});game.attacks.push({kind:"beam",x:o.x,y:o.y,a,len:280,w:10*size,dmg:12*dm,life:8,max:8,color:col,hit:new Set});return}
+  if(key==="charliebeer+keithbeef"){projectile(a+rand(-.15,.15),10.8,10*dm,6,82,"milk");projectile(a+rand(-.22,.22),8.6,9*dm,5,70,"acid");game.attacks.push({kind:"beam",x:o.x,y:o.y,a,len:105,w:18,dmg:8*dm,life:8,max:8,color:col,hit:new Set});return}
+  if(key==="cecehockey+hockey"){projectile(a-.12,12,16*dm,8,92,"stick");projectile(a+.12,12,10*dm,7,120,"puck");return}
+  if(key==="grantpass+johan"){projectile(a,13.2,10*dm,5,100,"hallpass",{pierce:true,hit:new Set(),spin:rand(0,TAU)});g.debugZones.push({x:o.x+Math.cos(a)*86,y:o.y+Math.sin(a)*70,r:16,maxR:88,life:54,max:54,dmg:3.2*dm,slow:.52});return}
+  if(key==="alirally+rydergolf"){for(let i=-1;i<=1;i++)projectile(a+i*.12,13.8,10*dm,5,110,"rally",{pierce:true,hit:new Set()});projectile(a,16.4,13*dm,4.5,90,"golf",{pierce:true,hit:new Set()});return}
+  if(key==="averybravery+sword"){g.iframes=Math.max(g.iframes,9);arcAttack(a,88*size,.62*size,14*dm,col);game.attacks.push({kind:"beam",x:g.p.x,y:g.p.y,a,len:110,w:18,dmg:11*dm,life:8,max:8,color:col,hit:new Set});return}
+  if(key==="lillielily+lilliewand"){for(let i=-2;i<=2;i++)projectile(a+i*.16,7.8,8.5*dm,5,85,i%2?"petal":"fairy",{homing:i%2===0,turn:.07,explode:i%2===0});shock(o.x+Math.cos(a)*82,o.y+Math.sin(a)*56,6,62*size,8*dm,col);return}
+  if(key==="eloiseheadphones+irelandisland"){g.debugZones.push({x:o.x+Math.cos(a)*80,y:o.y+Math.sin(a)*60,r:14,maxR:82,life:50,max:50,dmg:3.2*dm,slow:.55});game.attacks.push({kind:"shock",x:g.p.x,y:g.p.y,r:8,max:86*size,dmg:12*dm,life:24,maxLife:24,color:col,hit:new Set});return}
+ }
  if(id==="potion"){if(g.demon<=0)g.demon=Math.max(g.demon,90);burst(o.x,o.y,"#e044ff",9,3);return}
  if(id==="sword"){arcAttack(a,64*size,.5*size,10*dm,"#bce6ff");return}
  if(id==="nicholaswrestle"){game.attacks.push({kind:"beam",x:g.p.x,y:g.p.y,a,len:62,w:22,dmg:11*dm,life:8,max:8,color:"#ffb52b",hit:new Set});g.iframes=Math.max(g.iframes,4);return}
@@ -2607,7 +2674,7 @@ function updateArena(){
  }
  g.hazards=g.hazards.filter(h=>!h.done);
  if(g.mode==="boss"&&g.boss)updateBoss(g.boss);
- if(g.boss&&g.boss.hp<=0)bossDefeated();
+ if(g.boss&&g.boss.hp<=0){if(g.boss.impossible)impossibleReform(g.boss);else bossDefeated()}
  if(g.hp<=0)gameOver();
  updateHud();
 }
